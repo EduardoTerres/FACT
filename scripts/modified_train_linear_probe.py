@@ -310,7 +310,7 @@ def main(args):
         sparsity_loss_fn = torch.nn.L1Loss()
 
     # Precompute related concepts and similarities
-    closest_concepts = get_concepts(args, k=2000)  # Adjust k as needed
+    closest_concepts = get_concepts(args, k=8192)  # Adjust k as needed
     num_concepts = model.weight.shape[1]
     related_masks, similarity_matrix = precompute_related_concepts(closest_concepts, num_concepts)
 
