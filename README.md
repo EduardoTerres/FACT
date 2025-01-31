@@ -177,7 +177,7 @@ python scripts/automatic_concept_intervention.py --lr 5e-4 --l1_coeff 3e-5 --exp
 ```bash
 python scripts/modified_train_linear_probe.py --lr 5e-4 --l1_coeff 3e-5 --expansion_factor 8 --img_enc_name clip_RN50 --resample_freq 10 --train_sae_bs 4096 --num_epochs 200 --ckpt_freq 0 --val_freq 1 --probe_lr 1e-3  --probe_sparsity_loss_lambda 1 --probe_classification_loss 'CE' --probe_epochs 200 --probe_sparsity_loss L1 --probe_eval_coverage_freq 50 --probe_dataset cifar10 --penalty_lambda 2e-7 --use_wandb
 ```
-In order to see the top-k concepts for each class resulting from this training, you can look at the function get_top_k_biggest_weights() in automatic_concept_intervention.py and manual_concept_intervention.py. This operation (showing the top-k largest weights), is also done in those scripts.
+In order to see the top-k concepts for each class resulting from this training, you can look at the function `get_top_k_biggest_weights()` in `automatic_concept_intervention.py` and `manual_concept_intervention.py`. This operation (showing the top-k largest weights), is also done in those scripts.
 
 ## Understanding the concept space using different vocabularies
 ### Prerequisites
