@@ -1,15 +1,5 @@
 <h1 align="center">Reproducibility study of Discover-then-Name: a Task-Agnostic Concept Bottleneck model</h1>
 
-
-Authors of the original paper
-<div align="center">
-<a href="https://sukrutrao.github.io">Sukrut Rao*</a>,
-<a href="https://swetamahajan.github.io">Sweta Mahajan*</a>,
-<a href="https://moboehle.github.io">Moritz Böhle</a>,
-<a href="https://people.mpi-inf.mpg.de/~schiele">Bernt Schiele</a>
-</div>
-  
-
 ## Setup
 
 ### Prerequisites
@@ -25,6 +15,16 @@ pip install -r requirements.txt
 pip install -e sparse_autoencoder/
 pip install -e .
 ```
+
+### What is inside the repository?
+- BS folder: Vocabulary embeddings: concreteness ratings, wordnet and clipdissect_20k embeddings, so you don't have to (necessarily) recompute them :).
+- SAE folder: Trained SAE and concept names with default hyperparameters for both RN50 and ViT-B16.
+- clip folder: clip repository from openai.
+- dncbm folder: Discover then Name model files + utils.
+- scripts folder: executables for training and experiments.
+    - visualization folder: this folder contains visualization scripts for the 4 original experiments: Task Agnosticity, Meta clusters, Local explanations, Global explanations.
+- sparse_autoencoder folder: Original sparse autoencoder repository.
+- vocab folder: txt files of the aforementioned vocabularies.
 
 ### Dataset for training Sparse Autoencoder (CC3M)
 
@@ -49,7 +49,7 @@ Note: Number of downloaded paired dataset might be less than we used for our tra
 
 ### Vocabulary for naming concepts
 
-We use both the vocabulary of 20k words used by [CLIP-Dissect](https://arxiv.org/abs/2204.10965), from [here](https://github.com/first20hours/google-10000-english/blob/master/20k.txt). Download and place the text file named as `"clipdissect_20k.txt` in `vocab_dir` specified in `config.py`. Then compute normalized CLIP embeddings of each text and save them as `embeddings_<encoder_name>_clipdissect_20k.pth` in `vocab_dir`. For example, for CLIP ResNet-50, the embedding file should be named `embeddings_clip_RN50_clipdissect_20k.pth`. 
+We use the vocabulary of 20k words used by [CLIP-Dissect](https://arxiv.org/abs/2204.10965), from [here](https://github.com/first20hours/google-10000-english/blob/master/20k.txt). Download and place the text file named as `"clipdissect_20k.txt` in `vocab_dir` specified in `config.py`. Then compute normalized CLIP embeddings of each text and save them as `embeddings_<encoder_name>_clipdissect_20k.pth` in `vocab_dir`. For example, for CLIP ResNet-50, the embedding file should be named `embeddings_clip_RN50_clipdissect_20k.pth`.
 
 
 ### Datasets for training downstream probes
@@ -161,10 +161,49 @@ Then, plot the global explanations:
 python scripts/visualization/vis_global_explanations_plot.py --img_enc_name clip_RN50 --method_name ours --probe_split val   --probe_dataset places365 --which_ckpt final --device cpu
 ```
 
+# Extensions
+## Automated Human-like concept intervention
+### Prerequisites
+- Trained probe as in: 
+```bash
+python scripts/train_linear_probe.py --lr 5e-4 --l1_coeff 3e-5 --expansion_factor 8 --img_enc_name clip_RN50 --resample_freq 10 --train_sae_bs 4096 --num_epochs 200 --ckpt_freq 0 --val_freq 1 --probe_lr 1e-2  --probe_sparsity_loss_lambda 1 --probe_classification_loss 'CE' --probe_epochs 200 --probe_sparsity_loss L1 --probe_eval_coverage_freq 50 --probe_dataset cifar10
+```
+### Commands
+```bash
+python scripts/automatic_concept_intervention.py --lr 5e-4 --l1_coeff 3e-5 --expansion_factor 8 --img_enc_name clip_RN50 --resample_freq 10 --train_sae_bs 4096 --num_epochs 200 --ckpt_freq 0 --val_freq 1 --probe_lr 1e-2  --probe_sparsity_loss_lambda 1 --probe_classification_loss 'CE' --probe_epochs 200 --probe_sparsity_loss L1 --probe_eval_coverage_freq 50 --probe_dataset cifar10 --probe_similarity_model sentence_transformer
+```
+
+## Modifying the training loss as a concept intervention
+```bash
+python scripts/modified_train_linear_probe.py --lr 5e-4 --l1_coeff 3e-5 --expansion_factor 8 --img_enc_name clip_RN50 --resample_freq 10 --train_sae_bs 4096 --num_epochs 200 --ckpt_freq 0 --val_freq 1 --probe_lr 1e-3  --probe_sparsity_loss_lambda 1 --probe_classification_loss 'CE' --probe_epochs 200 --probe_sparsity_loss L1 --probe_eval_coverage_freq 50 --probe_dataset cifar10 --penalty_lambda 2e-7 --use_wandb
+```
+In order to see the top-k concepts for each class resulting from this training, you can look at the function get_top_k_biggest_weights() in automatic_concept_intervention.py and manual_concept_intervention.py. This operation (showing the top-k largest weights), is also done in those scripts.
+
+## Understanding the concept space using different vocabularies
+### Prerequisites
+Train a linear probe as in: 
+```bash
+python scripts/train_linear_probe.py --lr 5e-4 --l1_coeff 3e-5 --expansion_factor 8 --img_enc_name clip_RN50 --resample_freq 10 --train_sae_bs 4096 --num_epochs 200 --ckpt_freq 0 --val_freq 1 --probe_lr 1e-2  --probe_sparsity_loss_lambda 1 --probe_classification_loss 'CE' --probe_epochs 200 --probe_sparsity_loss L1 --probe_eval_coverage_freq 50 --probe_dataset cifar10
+```
+### Commands
+```bash
+python scripts/intervention_polysemanticity.py --lr 5e-4 --l1_coeff 3e-5 --expansion_factor 8 --img_enc_name clip_RN50 --resample_freq 10 --train_sae_bs 4096 --num_epochs 200 --ckpt_freq 0 --val_freq 1 --probe_lr 1e-2  --probe_sparsity_loss_lambda 1 --probe_classification_loss 'CE' --probe_epochs 200 --probe_sparsity_loss L1 --probe_eval_coverage_freq 50 --probe_dataset cifar10
+```
+For the rest of the extension, you can refer to the Jupyter notebook below to the section "Understanding the concept space using different vocabularies"
+
+# Demo notebook
+This Google Colab Jupyter notebook contains:
+- An example of a trained linear classifier that classifies CIFAR10, its accuracy on the test set and the top-k concepts it relies on for the classification (this classifier was trained with the normal loss function proposed by the original Discover then Name paper).
+- An example of a trained modified linear classifier that classifies CIFAR10, its accuracy on the test set and the top-k concepts it relies on for the classification (this classifier was trained with the modified loss function proposed by our paper).
+- Extension: Understanding the concept space using different vocabularies.
+- User study: quantitative evaluation of concept naming.
+
+Link to the notebook: https://colab.research.google.com/drive/1AcO_Ol-MKVXN9uy_iFRo1KGH_odFjFLL?usp=sharing
+
 ## Acknowledgements
 
 This repository uses code from the following repositories:
 
+* [neuroexplixit-saar/Discover-then-Name](https://github.com/neuroexplicit-saar/Discover-then-Name/)
 * [openai/CLIP](https://github.com/openai/CLIP)
 * [ai-safety-foundation/sparse_autoencoder](https://github.com/ai-safety-foundation/sparse_autoencoder/)
-* [neuroexplixit-saar/Discover-then-Name](https://github.com/neuroexplicit-saar/Discover-then-Name/)
