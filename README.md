@@ -49,7 +49,7 @@ Note: Number of downloaded paired dataset might be less than we used for our tra
 
 ### Vocabulary for naming concepts
 
-We use the vocabulary of 20k words used by [CLIP-Dissect](https://arxiv.org/abs/2204.10965), from [here](https://github.com/first20hours/google-10000-english/blob/master/20k.txt). Download and place the text file named as `"clipdissect_20k.txt` in `vocab_dir` specified in `config.py`. Then compute normalized CLIP embeddings of each text and save them as `embeddings_<encoder_name>_clipdissect_20k.pth` in `vocab_dir`. For example, for CLIP ResNet-50, the embedding file should be named `embeddings_clip_RN50_clipdissect_20k.pth`.
+We use both the vocabulary of 20k words used by [CLIP-Dissect](https://arxiv.org/abs/2204.10965), from [here](https://github.com/first20hours/google-10000-english/blob/master/20k.txt). Download and place the text file named as `"clipdissect_20k.txt` in `vocab_dir` specified in `config.py`. Then compute normalized CLIP embeddings of each text and save them as `embeddings_<encoder_name>_clipdissect_20k.pth` in `vocab_dir`. For example, for CLIP ResNet-50, the embedding file should be named `embeddings_clip_RN50_clipdissect_20k.pth`. 
 
 
 ### Datasets for training downstream probes
@@ -156,7 +156,7 @@ First, save the required files for plotting:
 python scripts/visualization/vis_global_explanations_dump.py --sae_dataset cc3m --img_enc_name clip_RN50 --method_name ours --probe_split val   --probe_dataset places365 --which_ckpt final
 ```
 
-Then, plot the global explnataions: 
+Then, plot the global explanations: 
 ```bash
 python scripts/visualization/vis_global_explanations_plot.py --img_enc_name clip_RN50 --method_name ours --probe_split val   --probe_dataset places365 --which_ckpt final --device cpu
 ```
@@ -167,4 +167,4 @@ This repository uses code from the following repositories:
 
 * [openai/CLIP](https://github.com/openai/CLIP)
 * [ai-safety-foundation/sparse_autoencoder](https://github.com/ai-safety-foundation/sparse_autoencoder/)
-* [neuroexplixit-saar/Discover-then-Name](https://github.com/neuroexplicit-saar/Discover-then-Name/tree/main/scripts)
+* [neuroexplixit-saar/Discover-then-Name](https://github.com/neuroexplicit-saar/Discover-then-Name/)
