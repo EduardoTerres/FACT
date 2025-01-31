@@ -1398,7 +1398,7 @@ full_imagenet_class_dict = ['tench, Tinca tinca',
                    'toilet tissue, toilet paper, bathroom tissue'
 ]
 
-waterbirds100_classes = ["waterbird, BIRDS that live near water, like ducks, seagulls, swans and flamingos", "landbirds, BIRDS that live on land like sparrows, parrots, crows, owls and pigeons"]
+waterbirds100_classes = ["waterbird", "landbird"]
 
 probe_classes_dict = {"cifar10": cifar10_classes, "cifar100": cifar100_classes,
                       "places365": places365_classes, "imagenet": imagenet_class_dict,
