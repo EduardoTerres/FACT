@@ -198,8 +198,6 @@ This Google Colab Jupyter notebook contains:
 - Extension: Understanding the concept space using different vocabularies.
 - User study: quantitative evaluation of concept naming.
 
-Link to the notebook: https://colab.research.google.com/drive/1AcO_Ol-MKVXN9uy_iFRo1KGH_odFjFLL?usp=sharing
-
 ## Acknowledgements
 
 This repository uses code from the following repositories:
